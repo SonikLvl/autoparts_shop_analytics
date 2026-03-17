@@ -41,7 +41,7 @@
 | :--- | :--- |
 | **Frontend** | React, Vite, TypeScript, TailwindCSS, Recharts |
 | **Backend** | .NET 8 (ASP.NET Core Web API), Dapper (Micro-ORM) |
-| **Database** | Oracle Database |
+| **Database** | PostgreSQL 17 |
 | **Cache** | Redis |
 
 ---
@@ -52,11 +52,11 @@
 Переконайтеся, що на вашій машині встановлені:
 * [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 * [Node.js](https://nodejs.org/) 
-* СУБД Oracle (локально або віддалений доступ)
+* СУБД PostgreSQL (локально або віддалений доступ)
 * Redis Server (на Linux/WSL або Memurai для Windows)
 
 ### 1. Налаштування Бази Даних
-1. Виконайте SQL-скрипти з папки `/database` у вашому екземплярі Oracle для створення таблиць та наповнення їх тестовими даними.
+1. Виконайте SQL-скрипти з папки `/database` у вашому екземплярі PostgreSQL для створення таблиць та наповнення їх тестовими даними.
 2. Переконайтеся, що користувач має права на виконання операцій `SELECT`, `INSERT`, `UPDATE`.
 
 ### 2. Запуск Backend (.NET API)
