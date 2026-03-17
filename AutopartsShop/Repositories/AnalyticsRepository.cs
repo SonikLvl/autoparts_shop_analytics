@@ -136,7 +136,7 @@ namespace AutoPartsStore.Repositories
             var sql = @"
                 SELECT 
                     p.name AS ProductName, 
-                    NVL(SUM(s.quantity) / NULLIF(COUNT(DISTINCT EXTRACT(MONTH FROM s.sale_date) + EXTRACT(YEAR FROM s.sale_date) * 12), 0), 0) AS AverageMonthlySales
+                    COALESCE(SUM(s.quantity) / NULLIF(COUNT(DISTINCT EXTRACT(MONTH FROM s.sale_date) + EXTRACT(YEAR FROM s.sale_date) * 12), 0), 0) AS AverageMonthlySales
                 FROM sales s
                 JOIN products p ON s.product_id = p.id
                 GROUP BY p.name";
@@ -158,8 +158,8 @@ namespace AutoPartsStore.Repositories
             // Прибуток = Сума (продажі - собівартість). Собівартість беремо як середню ціну закупівлі товару.
             var totalSql = @"
                 SELECT 
-                    NVL(SUM(s.quantity * s.sale_price), 0) AS TotalTurnover,
-                    NVL(SUM(s.quantity * s.sale_price) - SUM(s.quantity * so_avg.avg_price), 0) AS TotalProfit
+                    COALESCE(SUM(s.quantity * s.sale_price), 0) AS TotalTurnover,
+                    COALESCE(SUM(s.quantity * s.sale_price) - SUM(s.quantity * so_avg.avg_price), 0) AS TotalProfit
                 FROM sales s
                 JOIN (
                     SELECT product_id, AVG(unit_price) AS avg_price 
@@ -180,8 +180,8 @@ namespace AutoPartsStore.Repositories
             // 3. Рахуємо показники конкретного постачальника
             var supplierSql = @"
                 SELECT 
-                    NVL(SUM(s.quantity), 0) AS ShareUnits, 
-                    NVL(SUM(s.quantity * s.sale_price), 0) AS ShareMoney
+                    COALESCE(SUM(s.quantity), 0) AS ShareUnits, 
+                    COALESCE(SUM(s.quantity * s.sale_price), 0) AS ShareMoney
                 FROM sales s
                 JOIN supplier_offers so ON s.product_id = so.product_id
                 WHERE so.supplier_id = @SupplierId 

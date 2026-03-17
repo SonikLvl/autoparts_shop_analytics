@@ -10,7 +10,7 @@ import {
 } from '../types/api';
 
 const USE_MOCK = false; // Toggle this to switch to real API
-const API_BASE_URL = 'https://localhost:7180/api/analytics';
+const API_BASE_URL = 'http://209.38.201.190:5000/api/analytics';
 
 export const apiClient = {
   async getSuppliers(category?: string, productName?: string, minVolume?: number, startDate?: string, endDate?: string): Promise<Supplier[]> {
