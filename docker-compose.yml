@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: defaultdb
+    ports:
+      - "5435:5433"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Redis (Valkey)
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  # .NET 
+  api:
+    build: 
+      context: ./AutopartsShop 
+    ports:
+      - "5005:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PostgresConnection=Host=db;Port=5432;Database=defaultdb;Username=admin;Password=password;
+      - ConnectionStrings__RedisConnection=redis:6379
+    depends_on:
+      - db
+      - redis
+
+  #  React 
+  web:
+    build: 
+      context: ./vite 
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
