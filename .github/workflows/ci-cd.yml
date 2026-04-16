@@ -10,8 +10,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME_API: ${{ github.repository_owner }}/autoparts-api
-  IMAGE_NAME_WEB: ${{ github.repository_owner }}/autoparts-web
+  IMAGE_NAME_API: soniklvl/autoparts-api
+  IMAGE_NAME_WEB: soniklvl/autoparts-web
 
 jobs:
   # Тестування та Компіляція 
