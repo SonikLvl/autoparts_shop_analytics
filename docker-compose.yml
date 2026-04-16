@@ -11,6 +11,7 @@ services:
     ports:
       - "5435:5433"
     volumes:
+      - ./database/init_postgre.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
 
   # Redis (Valkey)
