@@ -103,6 +103,7 @@ jobs:
           host: ${{ env.TARGET_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           envs: GITHUB_REF_NAME, ENV_FOLDER, WEB_PORT, API_PORT
           script: |
             echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
