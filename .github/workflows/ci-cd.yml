@@ -100,6 +100,7 @@ jobs:
             echo "TARGET_HOST=${{ secrets.DEV_HOST }}" >> $GITHUB_ENV
             echo "ENV_FOLDER=autoparts-dev" >> $GITHUB_ENV
           fi
+
           echo "WEB_PORT=3000" >> $GITHUB_ENV
           echo "API_PORT=5005" >> $GITHUB_ENV
 
