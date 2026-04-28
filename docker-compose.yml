@@ -6,8 +6,6 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
       POSTGRES_DB: defaultdb
-    ports:
-      - "5435:5432"
     volumes:
       - ./database/init_postgre.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
@@ -15,8 +13,7 @@ services:
   # Redis (Valkey)
   redis:
     image: redis:alpine
-    ports:
-      - "6379:6379"
+
 
   # .NET 
   api:
