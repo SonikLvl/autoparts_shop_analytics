@@ -74,7 +74,7 @@ jobs:
           if [[ "${{ github.ref_name }}" == "main" ]]; then
             echo "VITE_API_URL=http://${{ secrets.PROD_HOST }}:5005/api/analytics" > ./vite/.env
           else
-            echo "VITE_API_URL=http://${{ secrets.DEV_HOST }}:5006/api/analytics" > ./vite/.env
+            echo "VITE_API_URL=http://${{ secrets.DEV_HOST }}:5005/api/analytics" > ./vite/.env
           fi
 
       - name: Build and push WEB image
@@ -96,14 +96,13 @@ jobs:
           if [[ "${{ github.ref_name }}" == "main" ]]; then
             echo "TARGET_HOST=${{ secrets.PROD_HOST }}" >> $GITHUB_ENV
             echo "ENV_FOLDER=autoparts-prod" >> $GITHUB_ENV
-            echo "WEB_PORT=3000" >> $GITHUB_ENV # Prod буде на 3000
-            echo "API_PORT=5005" >> $GITHUB_ENV # Prod API на 5005
           else
             echo "TARGET_HOST=${{ secrets.DEV_HOST }}" >> $GITHUB_ENV
             echo "ENV_FOLDER=autoparts-dev" >> $GITHUB_ENV
-            echo "WEB_PORT=3001" >> $GITHUB_ENV # Dev буде на 3001
-            echo "API_PORT=5006" >> $GITHUB_ENV # Dev API на 5006
           fi
+          # Порти тепер однакові для обох серверів!
+          echo "WEB_PORT=3000" >> $GITHUB_ENV
+          echo "API_PORT=5005" >> $GITHUB_ENV
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
