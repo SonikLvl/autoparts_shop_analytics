@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autoparts-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoparts-db
+  template:
+    metadata:
+      labels:
+        app: autoparts-db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "sonik"
+        - name: POSTGRES_PASSWORD
+          value: "2stG3cWuQMLF"
+        - name: POSTGRES_DB
+          value: "autoparts"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  selector:
+    app: autoparts-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

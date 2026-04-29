@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: autoparts-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      # Все, що починається з /api, йде на бекенд
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: autoparts-api-service
+            port:
+              number: 80
+              
+      # Все інше йде на фронтенд
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: autoparts-web-service
+            port:
+              number: 80

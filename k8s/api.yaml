@@ -15,20 +15,26 @@ spec:
       containers:
       - name: api
         image: ghcr.io/soniklvl/autoparts-api:main 
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
+        - name: ConnectionStrings__RedisConnection
+          value: "redis:6379"
+        - name: ConnectionStrings__PostgresConnection
+          value: "Host=db;Database=autoparts;Username=sonik;Password=2stG3cWuQMLF;"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: autoparts-api-service
 spec:
+  type: ClusterIP
   selector:
     app: autoparts-api
   ports:
     - protocol: TCP
-      port: 5005      # Порт, за яким звертатиметься фронтенд
+      port: 80      # Порт, за яким звертатиметься фронтенд
       targetPort: 5000 # Порт всередині контейнера
