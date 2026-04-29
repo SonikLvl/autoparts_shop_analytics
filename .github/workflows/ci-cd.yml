@@ -72,7 +72,7 @@ jobs:
       - name: Create frontend .env file
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "VITE_API_URL=http://${{ secrets.PROD_HOST }}:5005/api/analytics" > ./vite/.env
+            echo "VITE_API_URL=http://${{ secrets.PROD_HOST }}/api/analytics" > ./vite/.env
           else
             echo "VITE_API_URL=http://${{ secrets.DEV_HOST }}:5005/api/analytics" > ./vite/.env
           fi
