@@ -84,44 +84,41 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_WEB }}:${{ github.ref_name }}
 
-  # Розгортання на DigitalOcean 
+  # Розгортання (Droplet для Dev, Kubernetes для Main)
   deploy:
     needs: build-and-push-images
     runs-on: ubuntu-latest
     steps:
-     # Логіка Git Flow - змінні для середовищ
-      - name: Set environment variables
-        id: server_vars
-        run: |
-          if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "TARGET_HOST=${{ secrets.PROD_HOST }}" >> $GITHUB_ENV
-            echo "ENV_FOLDER=autoparts-prod" >> $GITHUB_ENV
-          else
-            echo "TARGET_HOST=${{ secrets.DEV_HOST }}" >> $GITHUB_ENV
-            echo "ENV_FOLDER=autoparts-dev" >> $GITHUB_ENV
-          fi
-
-          echo "WEB_PORT=3000" >> $GITHUB_ENV
-          echo "API_PORT=5005" >> $GITHUB_ENV
-
-      - name: Deploy via SSH
+      # --- ЛОГІКА ДЛЯ DEV-ГІЛКИ (Старий Droplet) ---
+      - name: Deploy DEV via SSH
+        if: github.ref_name == 'dev'
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ env.TARGET_HOST }}
+          host: ${{ secrets.DEV_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          envs: GITHUB_REF_NAME, ENV_FOLDER, WEB_PORT, API_PORT
+          envs: GITHUB_REF_NAME
           script: |
             echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            
-            mkdir -p ~/$ENV_FOLDER
-            cd ~/$ENV_FOLDER
-            
-            # Передаємо змінні в Docker Compose
+            mkdir -p ~/autoparts-dev && cd ~/autoparts-dev
             export IMAGE_TAG=${GITHUB_REF_NAME}
-            export WEB_PORT=${WEB_PORT}
-            export API_PORT=${API_PORT}
-            
             docker compose pull
             docker compose up -d
+
+      # --- ЛОГІКА ДЛЯ MAIN-ГІЛКИ (Kubernetes) ---
+      - name: Install doctl (for K8s)
+        if: github.ref_name == 'main'
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_PAT }}
+
+      - name: Deploy PROD to Kubernetes
+        if: github.ref_name == 'main'
+        run: |
+          doctl kubernetes cluster kubeconfig save autoparts-k8s
+          
+          kubectl rollout restart deployment autoparts-web
+          kubectl rollout restart deployment autoparts-api
+          kubectl rollout status deployment/autoparts-web
+          kubectl rollout status deployment/autoparts-api
