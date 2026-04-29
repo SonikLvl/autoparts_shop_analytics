@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autoparts-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoparts-api
+  template:
+    metadata:
+      labels:
+        app: autoparts-api
+    spec:
+      containers:
+      - name: api
+        image: ghcr.io/soniklvl/autoparts-api:main 
+        ports:
+        - containerPort: 5000
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: autoparts-api-service
+spec:
+  selector:
+    app: autoparts-api
+  ports:
+    - protocol: TCP
+      port: 5005      # Порт, за яким звертатиметься фронтенд
+      targetPort: 5000 # Порт всередині контейнера
